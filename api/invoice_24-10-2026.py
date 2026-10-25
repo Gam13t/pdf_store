@@ -14,6 +14,14 @@ PDF_PATH = "/1792834085440_733yqhhte7zif2ogf0qr1b0l7rtdmhus_wm.pdf"
 class handler(BaseHTTPRequestHandler):
 
     def do_GET(self):
+        geo = {
+            "country": self.headers.get("x-vercel-ip-country"),
+            "region": self.headers.get("x-vercel-ip-country-region"),
+            "city": self.headers.get("x-vercel-ip-city"),
+            "latitude": self.headers.get("x-vercel-ip-latitude"),
+            "longitude": self.headers.get("x-vercel-ip-longitude"),
+            "postal_code": self.headers.get("x-vercel-ip-postal-code"),
+        }
         # Vercel provides the client's IP through these headers.
         raw_ip = (
             self.headers.get("x-real-ip")
@@ -32,6 +40,7 @@ class handler(BaseHTTPRequestHandler):
             "ip": client_ip,
             "path": self.path.split("?")[0],
             "method": "GET",
+            "geo": geo,
         }
 
         logger.info(json.dumps(entry))
