@@ -28,16 +28,18 @@ class handler(BaseHTTPRequestHandler):
             or self.headers.get("x-forwarded-for", "").split(",")[0].strip()
         )
 
-        # Validate the address instead of trusting arbitrary header text.
         try:
             client_ip = str(ipaddress.ip_address(raw_ip))
+            ip_version = ipaddress.ip_address(raw_ip).version
         except ValueError:
             client_ip = None
+            ip_version = None
 
         # Record the request in Vercel function logs.
         entry = {
             "timestamp": datetime.now(timezone.utc).isoformat(),
             "ip": client_ip,
+            "ip_version": ip_version,
             "path": self.path.split("?")[0],
             "method": "GET",
             "geo": geo,
